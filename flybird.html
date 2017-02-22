@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style>
+			canvas {
+				border: 1px solid #ccc;
+			}
+        </style>
+    </head>
+    <body>
+    <canvas id="cv">
+    	<!-- 提示，如果不支持会显示字体 -->
+    	你的浏览器不支持canvas，请升级浏览器或跟换浏览器
+    </canvas>
+
+    <script>
+    	var cv = document.querySelector("#cv");
+    	//获取上下文
+    	var ctx = cv.getContext("2d");
+
+    	cv.height = 600;
+    	cv.width = 1000;
+    	
+    	//获取弧度
+    	var toRadian = function(angle) {
+    		return angle / 180 * Math.PI;
+    	} 
+    	// 获取角度
+    	var toAngle = function(radian) {
+    		return radian / Math.PI * 180;
+    	}
+    	/*//创建图片
+    	var img = new Image();
+    	img.src = "imgs/fy/birds.png";
+    	var index = 0;
+    	//起始位置,起始速度和加速度
+    	var y = 100,
+    		v = 0,
+    		a = 10;
+    	//获取时间
+    	var lastFrameTime = new Date();
+    	//注册小鸟翅膀运动事件
+        img.addEventListener('load', function() {
+        	var index = 0,
+        	imgW = this.width / 3,
+        	imgH = this.height;
+        	(function render() {
+        		ctx.clearRect(0 , 0, cv.width, cv.height);
+        		//获取执行时的时间
+        		var curFrameTime = new Date();
+        		//时间间隔
+        		var delta = (curFrameTime - lastFrameTime) / 100;
+        		//修改上一帧的时间，保证每一滴时间间隔
+        		lastFrameTime = curFrameTime;
+        		console.log(delta)
+        		ctx.drawImage(img, index++ * imgW, 0, imgW, imgH, 100, y, imgW, imgH);
+        		index %= 3;
+        		//瞬时速度和位移
+        		v = v + delta;
+        		y += v * delta + 1 / 2 * a * Math.pow(delta, 2);
+
+        		window.requestAnimationFrame(render);
+        	})();
+        }); 
+        //注册鼠标点击事件
+        cv.addEventListener('click', function() {
+        	v = -10;
+        })*/
+
+/*<--------------------------------------------------------------------------------------------------------------------------------------------------->*/
+		var imgArr = ["birds", "land", "pipe1", "pipe2", "sky"];
+
+        //封装图片加载函数
+        var loadImgs = function(srcList, callback) {
+        	var	
+        		//记录加载完成的图片数量
+        	 	loadedCount = 0,
+        		//图片的总数量
+        		len = srcList.length,
+        		//取出图片。使用对象存储图片，通过键拿到对应的图片
+        		retList = {};
+        	srcList.forEach(function(srcStr) {
+        		var img = new Image();
+        		img.src = 'images/' + srcStr + '.png';
+        		//监听load时间，只要图片加载完成，执行回调函数
+        		img.addEventListener('load', function() {
+        			loadedCount ++;
+        			//把图片存到retList中
+        			retList[srcStr] = img;
+
+        			if(loadedCount >= len) {
+        				//表示所有图片加载完成
+        				callback(retList);
+        			}
+        		})
+        	});
+        };
+
+        //调用方式
+        loadImgs(imgArr, function(imgList) {
+        	//所有代码逻辑。。。
+        	console.log('代码');
+	    	var index = 0;
+	    	//起始位置,起始速度和加速度
+	    	var y = 100,
+	    		v = 0,
+	    		a = 10;
+	    	//获取时间
+	    	var lastFrameTime = new Date();
+	        	var index = 0,
+		        	birdImg = imgList["birds"],
+		        	imgW = birdImg.width / 3,
+		        	imgH = birdImg.height;
+	        	(function render() {
+	        		ctx.clearRect(0 , 0, cv.width, cv.height);
+	        		//获取执行时的时间
+	        		var curFrameTime = new Date();
+	        		//时间间隔
+	        		var delta = (curFrameTime - lastFrameTime) / 100;
+	        		//修改上一帧的时间，保证每一滴时间间隔
+	        		lastFrameTime = curFrameTime;
+	        		console.log(delta)
+	        		ctx.drawImage(birdImg, index++ * imgW, 0, imgW, imgH, 100, y, imgW, imgH);
+	        		index %= 3;
+	        		//瞬时速度和位移
+	        		v = v + delta;
+	        		y += v * delta + 1 / 2 * a * Math.pow(delta, 2);
+
+	        		window.requestAnimationFrame(render);
+	        	})();
+	        //注册鼠标点击事件
+	        cv.addEventListener('click', function() {
+	        	v = -10;
+	        })
+        })
+        
+    </script>
+    </body>
+</html>+***+

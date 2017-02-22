@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style>
+			canvas {
+				border: 1px solid #ccc;
+				margin: 0 auto;
+				/* 默认canvas的大小为300*150 
+				并且不能用CSS设置宽高，只能用HTML属性（行内）和DOM属性来设置*/
+			}
+        </style>
+    </head>
+    <body>
+    <canvas id="cv">
+    	<!-- 提示，如果不支持会显示字体 -->
+    	你的浏览器不支持canvas，请升级浏览器或跟换浏览器
+    </canvas>
+
+    <script>
+    	//通过HTML属性和DOM设置样式设置宽高是改变canvas中的像素点的个数来改变画布大小的
+    	//通过CSS设置宽高是改变像素点的大小而不是像素点的个数
+    	var cv = document.querySelector("#cv");
+    	//获取上下文
+    	var ctx = cv.getContext("2d");
+
+    	cv.height = 600;
+    	cv.width = 1000;
+
+    	//x , y 表示圆点，radius 半径，startAngle/endAngle 起始/结束弧度，anticlockwise 默认为顺时针
+    	//ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+    	//  1弧度 = 1 * π = 180度   π = Math.PI
+    	//  弧度：弧度 = 角度 / 180 * Math.PI
+    	//  角度：角度 = 弧度 / Math.PI * 180 )
+    	
+    	//获取弧度
+    	var toRadian = function(angle) {
+    		return angle / 180 * Math.PI;
+    	} 
+    	// 获取角度
+    	var toAngle = function(radian) {
+    		return radian / Math.PI * 180;
+    	}
+    	/*//创建图片
+    	var img = new Image();
+    	img.src = "imgs/fy/birds.png";
+    	var index = 0;
+    	//起始位置,起始速度和加速度
+    	var y = 100,
+    		v = 0,
+    		a = 10;
+    	//获取时间
+    	var lastFrameTime = new Date();
+    	//注册小鸟翅膀运动事件
+        img.addEventListener('load', function() {
+        	var index = 0,
+        	imgW = this.width / 3,
+        	imgH = this.height;
+        	(function render() {
+        		ctx.clearRect(0 , 0, cv.width, cv.height);
+        		//获取执行时的时间
+        		var curFrameTime = new Date();
+        		//时间间隔
+        		var delta = (curFrameTime - lastFrameTime) / 100;
+        		//修改上一帧的时间，保证每一滴时间间隔
+        		lastFrameTime = curFrameTime;
+        		console.log(delta)
+        		ctx.drawImage(img, index++ * imgW, 0, imgW, imgH, 100, y, imgW, imgH);
+        		index %= 3;
+        		//瞬时速度和位移
+        		v = v + delta;
+        		y += v * delta + 1 / 2 * a * Math.pow(delta, 2);
+
+        		window.requestAnimationFrame(render);
+        	})();
+        }); 
+        //注册鼠标点击事件
+        cv.addEventListener('click', function() {
+        	v = -10;
+        })*/
+
+/*<--------------------------------------------------------------------------------------------------------------------------------------------------->*/
+		var imgArr = ["birds", "land", "pipe1", "pipe2", "sky"];
+
+        //封装图片加载函数
+        var loadImgs = function(srcList, callback) {
+        	var	
+        		//记录加载完成的图片数量
+        	 	loadedCount = 0,
+        		//图片的总数量
+        		len = srcList.length,
+        		//取出图片。使用对象存储图片，通过键拿到对应的图片
+        		retList = {};
+        	srcList.forEach(function(srcStr) {
+        		var img = new Image();
+        		img.src = 'images/' + srcStr + '.png';
+        		//监听load时间，只要图片加载完成，执行回调函数
+        		img.addEventListener('load', function() {
+        			loadedCount ++;
+        			//把图片存到retList中
+        			retList[srcStr] = img;
+
+        			if(loadedCount >= len) {
+        				//表示所有图片加载完成
+        				callback(retList);
+        			}
+        		})
+        	});
+        };
+
+        //调用方式
+        loadImgs(imgArr, function(imgList) {
+        	//所有代码逻辑。。。
+        	console.log('代码');
+	    	var frameIndex = 0;
+	    	//起始位置,起始速度和加速度
+	    	var y = 100,
+	    		speed = 0,
+	    		a = 5;
+            // 根据当前小鸟的速度实现小鸟的转动
+            // 速度越大，旋转角度越大
+            // 为了防止小鸟旋转次数太多，所以，我们设定一个最大旋转角度
+            var maxAngle = 45;
+            var maxSpeed = 0.3;
+            // 当前速度对应的角度
+            var curAngle = 0;
+	    	//获取时间
+	    	var lastFrameTime = new Date();
+        	var birdImg = imgList["birds"]
+                imgW = birdImg.width / 3,
+	        	imgH = birdImg.height;
+        	(function render() {
+        		ctx.clearRect(0 , 0, cv.width, cv.height);
+        		//获取执行时的时间
+        		var curFrameTime = new Date();
+        		//时间间隔
+        		var delta = (curFrameTime - lastFrameTime) / 100;
+        		//修改上一帧的时间，保证每一滴时间间隔
+        		lastFrameTime = curFrameTime;
+        		// console.log(delta)
+                // 保存
+                ctx.save();
+                //超过最大值的处理
+                curAngle = speed / maxSpeed * maxAngle;
+                if(speed >= maxSpeed) {
+                    curAngle = maxAngle;
+                } else if(speed <= -maxSpeed) {
+                    curAngle = -maxAngle;
+                } 
+                //根据角度旋转
+                ctx.translate(100, y)
+                ctx.rotate(toRadian(curAngle));
+
+        		ctx.drawImage(birdImg, frameIndex++ * imgW, 0, imgW, imgH, -1/2*imgW, -1/2*imgH, imgW, imgH);
+        		frameIndex %= 3;
+        		//瞬时速度和位移
+        		speed = speed + delta * a;
+        		y += speed * delta + 1 / 2 * a * Math.pow(delta, 2);
+
+                ctx.restore();
+        		window.requestAnimationFrame(render);
+        	})();
+	        //注册鼠标点击事件
+	        cv.addEventListener('click', function() {
+	        	speed = -30;
+	        });
+        })
+        
+    </script>
+    </body>
+</html>
